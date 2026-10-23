@@ -1,0 +1,10 @@
+﻿Flask
+Flask-SQLAlchemy
+Flask-Migrate
+Flask-CORS
+python-dotenv
+Flask-JWT-Extended
+Flask-Limiter
+pytest
+Pillow
+pytesseract
