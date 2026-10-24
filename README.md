@@ -164,9 +164,29 @@ The frontend must not treat a client-supplied role or verification status as aut
 
 ## AI Integration Status
 
-AI answer generation is not yet documented as an implemented API capability. Although the question model contains an `ai_answer` field, the AI service contract and generation workflow must be agreed upon and implemented before the frontend depends on them.
+AI answer generation is now supported through a server-side, OpenAI-compatible API integration. Verified users can request an AI explanation for a question via a secure backend endpoint. The generated answer is stored in the `Question.ai_answer` field and returned as part of the question payload.
 
-The planned integration should use server-side credentials, approved knowledge sources, timeouts, safe failure behavior, and grounded answers. Never expose AI provider API keys in frontend code.
+The integration uses server-side credentials, a strict timeout, grounded prompting, and graceful failure handling. Never expose AI provider API keys in frontend code.
+
+### AI configuration
+
+Add the following values to `backend/.env` before enabling AI features:
+
+```env
+AI_ENABLED=true
+AI_API_KEY=your_provider_api_key
+AI_API_BASE_URL=https://api.openai.com/v1
+AI_MODEL=gpt-4o-mini
+AI_TIMEOUT_SECONDS=20
+```
+
+When `AI_ENABLED` is false or no API key is provided, the backend returns a clear configuration error instead of attempting to call an external provider.
+
+### AI endpoint
+
+`POST /api/v1/questions/<question_id>/generate-ai-answer`
+
+Authenticated, verified users can request an AI-generated answer for a question they own (students) or for any question (faculty). The backend stores the generated answer and returns it in the response.
 
 ## Security and Deployment Notes
 

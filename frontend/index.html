@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CampusQ</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div id="app-shell">
+      <header class="topbar">
+        <div class="brand-wrap">
+          <div class="brand-mark">C</div>
+          <div>
+            <h1>CampusQ</h1>
+          </div>
+        </div>
+
+        <nav class="main-nav">
+          <button id="nav-home" class="nav-link active">Home</button>
+          <button id="nav-dashboard" class="nav-link">Dashboard</button>
+          <button id="nav-questions" class="nav-link">Questions</button>
+        </nav>
+
+        <div class="user-actions">
+          <span id="user-badge" class="status-pill hidden">Guest</span>
+          <button id="logout-btn" class="secondary-btn hidden">Logout</button>
+        </div>
+      </header>
+
+      <main class="page-container">
+        <section id="auth-view" class="panel auth-panel">
+          <div class="auth-grid">
+            <div class="auth-copy">
+              <p class="eyebrow">Student support platform</p>
+              <h2>Ask doubts. Learn faster. Stay verified.</h2>
+              <ul>
+                <li>Verified college access</li>
+                <li>Faculty-backed answers</li>
+                <li>Safe, moderated discussions</li>
+              </ul>
+            </div>
+
+            <div class="auth-forms">
+              <div class="form-card active" id="login-card">
+                <h3>Login</h3>
+                <form id="login-form">
+                  <label>
+                    Email
+                    <input type="email" id="login-email" required />
+                  </label>
+                  <label>
+                    Password
+                    <input type="password" id="login-password" required />
+                  </label>
+                  <button type="submit" class="primary-btn">Login</button>
+                </form>
+              </div>
+
+              <div class="form-card" id="register-card">
+                <h3>Register</h3>
+                <form id="register-form">
+                  <label>
+                    Full Name
+                    <input type="text" id="register-name" required />
+                  </label>
+                  <label>
+                    Email
+                    <input type="email" id="register-email" required />
+                  </label>
+                  <label>
+                    Password
+                    <input type="password" id="register-password" required />
+                  </label>
+                  <button type="submit" class="primary-btn">Create account</button>
+                </form>
+              </div>
+
+              <div class="toggle-row">
+                <button class="link-btn active" data-form-toggle="login-card">Login</button>
+                <button class="link-btn" data-form-toggle="register-card">Register</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="dashboard-view" class="hidden">
+          <div class="stats-grid">
+            <div class="stat-card">
+              <span>Verification</span>
+              <strong id="verification-status">Pending</strong>
+            </div>
+            <div class="stat-card">
+              <span>Role</span>
+              <strong id="user-role">Guest</strong>
+            </div>
+            <div class="stat-card">
+              <span>Questions</span>
+              <strong id="question-count">0</strong>
+            </div>
+          </div>
+
+          <div class="grid-two">
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Verification</h3>
+              </div>
+              <form id="verification-form" class="stacked-form">
+                <label>
+                  Upload college ID card
+                  <input type="file" id="id-card-file" accept="image/png, image/jpeg" required />
+                </label>
+                <button type="submit" class="primary-btn">Verify identity</button>
+              </form>
+              <div id="verification-message" class="message-box"></div>
+            </div>
+
+            <div class="panel">
+              <div class="panel-header">
+                <h3>Ask a question</h3>
+              </div>
+              <form id="question-form" class="stacked-form">
+                <label>
+                  Subject
+                  <input type="text" id="question-subject" placeholder="e.g. Python" required />
+                </label>
+                <label>
+                  Title
+                  <input type="text" id="question-title" placeholder="Short question title" required />
+                </label>
+                <label>
+                  Body
+                  <textarea id="question-body" rows="5" placeholder="Describe your doubt..." required></textarea>
+                </label>
+                <button type="submit" class="primary-btn">Submit question</button>
+              </form>
+              <div id="question-message" class="message-box"></div>
+            </div>
+          </div>
+        </section>
+
+        <section id="questions-view" class="hidden">
+          <div class="panel">
+            <div class="panel-header space-between">
+              <h3>Questions</h3>
+              <button id="refresh-questions" class="secondary-btn small-btn">Refresh</button>
+            </div>
+            <div id="questions-list" class="question-list"></div>
+          </div>
+        </section>
+
+        <section id="detail-view" class="hidden">
+          <div class="panel">
+            <div class="panel-header space-between">
+              <h3 id="detail-title">Question details</h3>
+              <button id="back-to-questions" class="secondary-btn small-btn">Back</button>
+            </div>
+
+            <div id="detail-content" class="detail-content"></div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

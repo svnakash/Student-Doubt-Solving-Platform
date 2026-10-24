@@ -34,3 +34,14 @@ class Config:
         "memory://",
     )
     RATELIMIT_HEADERS_ENABLED = True
+
+    AI_ENABLED = os.getenv("AI_ENABLED", "false").strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+    AI_API_KEY = os.getenv("AI_API_KEY")
+    AI_API_BASE_URL = (os.getenv("AI_API_BASE_URL") or "https://api.openai.com/v1").rstrip("/")
+    AI_MODEL = os.getenv("AI_MODEL", "gpt-4o-mini")
+    AI_TIMEOUT_SECONDS = int(os.getenv("AI_TIMEOUT_SECONDS", "20"))

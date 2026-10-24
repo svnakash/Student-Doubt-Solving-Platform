@@ -4,6 +4,8 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app import db
 from app.models import Question, User
+from app.services.ai_service import generate_ai_answer_for_question
+from app.services.moderation import contains_inappropriate_language
 
 questions_bp = Blueprint("questions", __name__)
 
@@ -111,6 +113,14 @@ def create_question():
                 "details": errors,
             },
         }), 400
+
+    combined_text = f"{subject.strip()} {title.strip()} {body.strip()}"
+    if contains_inappropriate_language(combined_text):
+        return error_response(
+            "INAPPROPRIATE_CONTENT",
+            "Your question contains inappropriate language. Please revise it.",
+            400,
+        )
 
     question = Question(
         student_id=user.id,
@@ -231,4 +241,73 @@ def get_question(question_id):
     return jsonify({
         "success": True,
         "data": question_response(question),
+    }), 200
+
+
+@questions_bp.post("/<int:question_id>/generate-ai-answer")
+@jwt_required()
+def generate_ai_answer(question_id):
+    user = get_active_user()
+
+    if user is None:
+        return error_response(
+            "USER_NOT_AVAILABLE",
+            "This account is unavailable.",
+            401,
+        )
+
+    if user.verification_status != "verified":
+        return error_response(
+            "VERIFICATION_REQUIRED",
+            "Verify your college identity before requesting AI help.",
+            403,
+        )
+
+    question = db.session.get(Question, question_id)
+
+    if question is None:
+        return error_response(
+            "QUESTION_NOT_FOUND",
+            "The requested question was not found.",
+            404,
+        )
+
+    if user.role == "student" and question.student_id != user.id:
+        return error_response(
+            "QUESTION_NOT_FOUND",
+            "The requested question was not found.",
+            404,
+        )
+
+    if user.role not in {"student", "faculty"}:
+        return error_response(
+            "ROLE_NOT_ALLOWED",
+            "Your role cannot access AI answers.",
+            403,
+        )
+
+    result = generate_ai_answer_for_question(question)
+
+    if not result["success"]:
+        status_code = 503 if result["code"] in {
+            "AI_NOT_CONFIGURED",
+            "AI_API_KEY_MISSING",
+            "AI_UNAVAILABLE",
+            "AI_PROVIDER_ERROR",
+        } else 400
+        return error_response(
+            result["code"],
+            result["message"],
+            status_code,
+        )
+
+    question.ai_answer = result["answer"]
+    db.session.commit()
+
+    return jsonify({
+        "success": True,
+        "data": {
+            "question_id": question.id,
+            "ai_answer": question.ai_answer,
+        },
     }), 200

@@ -4,6 +4,7 @@ from flask_jwt_extended import get_jwt_identity, jwt_required
 
 from app import db
 from app.models import Answer, Question, User
+from app.services.moderation import contains_inappropriate_language
 
 answers_bp = Blueprint("answers", __name__)
 
@@ -108,6 +109,13 @@ def create_answer(question_id):
         return error_response(
             "VALIDATION_ERROR",
             "Answer body must be at most 10000 characters.",
+            400,
+        )
+
+    if contains_inappropriate_language(body):
+        return error_response(
+            "INAPPROPRIATE_CONTENT",
+            "Your answer contains inappropriate language. Please revise it.",
             400,
         )
 
